@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ONDAS EN CUERDAS TENSAS — Cuaderno Interactivo</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script>window.MathJax={tex:{inlineMath:[['\\(','\\)'],['$','$']],displayMath:[['\\[','\\]'],['$$','$$']]},startup:{typeset:true}};</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+<style>
+:root{--bg:linear-gradient(135deg,#0f0c29,#302b63,#24243e);--page-bg:#fdfdff;--text:#2c3e50;--heading:#1565c0;--accent:#1565c0;--accent2:#ff6b6b;--accent3:#00c9a7;--gold:#ffd700;--grid:rgba(100,149,237,0.05);--nav-bg:rgba(255,255,255,0.88);--font:'Inter',sans-serif;--font-serif:'Playfair Display',serif;--font-mono:'JetBrains Mono',monospace}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:15px;line-height:1.7}
+#progress-bar{position:fixed;top:0;left:0;height:4px;background:linear-gradient(90deg,var(--accent),var(--accent2));z-index:1000;transition:width .3s}
+#dark-toggle{position:fixed;top:12px;left:12px;z-index:1001;background:none;border:none;font-size:22px;cursor:pointer;color:var(--heading);opacity:.7}
+#dark-toggle:hover{opacity:1}
+#page-info{position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:1001;font-size:12px;color:#aaa;opacity:.8;font-weight:500}
+body.dark{--bg:linear-gradient(135deg,#0a0a1a,#1a1a3e,#0f0f2e);--page-bg:rgba(20,25,45,.95);--text:#e0e8f0;--heading:#90caf9;--accent:#64b5f6;--accent2:#ff8a80;--accent3:#69f0ae;--grid:rgba(100,149,237,0.03);--nav-bg:rgba(15,20,40,0.92)}
+#book-container{width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+#book{width:min(95vw,1100px);height:min(88vh,720px);perspective:2000px;position:relative;transform-style:preserve-3d}
+.spread{position:absolute;inset:0;display:none;opacity:0;transition:opacity .4s,transform .4s}
+.spread.active{display:flex;opacity:1}
+.spread.flip-out-fwd{display:flex!important;animation:flipFwd .5s ease-in forwards;transform-origin:left center}
+.spread.flip-in-fwd{display:flex!important;animation:flipInFwd .5s ease-out forwards;transform-origin:right center}
+.spread.flip-out-back{display:flex!important;animation:flipBack .5s ease-in forwards;transform-origin:right center}
+.spread.flip-in-back{display:flex!important;animation:flipInBack .5s ease-out forwards;transform-origin:left center}
+@keyframes flipFwd{0%{transform:perspective(2000px) rotateY(0);opacity:1}100%{transform:perspective(2000px) rotateY(-100deg);opacity:0}}
+@keyframes flipBack{0%{transform:perspective(2000px) rotateY(0);opacity:1}100%{transform:perspective(2000px) rotateY(100deg);opacity:0}}
+@keyframes flipInFwd{0%{transform:perspective(2000px) rotateY(100deg);opacity:0}100%{transform:perspective(2000px) rotateY(0);opacity:1}}
+@keyframes flipInBack{0%{transform:perspective(2000px) rotateY(-100deg);opacity:0}100%{transform:perspective(2000px) rotateY(0);opacity:1}}
+.page{flex:1;background:var(--page-bg);padding:32px 36px;overflow-y:auto;position:relative;box-shadow:2px 2px 20px rgba(0,0,0,.1);background-image:repeating-linear-gradient(var(--grid) 0 1px,transparent 1px 28px),repeating-linear-gradient(90deg,var(--grid) 0 1px,transparent 1px 28px);background-size:28px 28px;scrollbar-width:thin;border:1px solid rgba(255,255,255,.08)}
+.page::-webkit-scrollbar{width:5px}.page::-webkit-scrollbar-thumb{background:var(--accent);border-radius:3px}
+.page-left{border-radius:12px 0 0 12px;border-right:none}
+.page-right{border-radius:0 12px 12px 0;border-left:none}
+.page .page-num{position:absolute;bottom:8px;font-size:11px;color:var(--text);opacity:.4}
+.page-left .page-num{left:15px}.page-right .page-num{right:15px}
+.spiral{width:40px;display:flex;flex-direction:column;justify-content:space-around;align-items:center;background:linear-gradient(90deg,rgba(240,242,245,.3) 0%,#b0c4de 8%,#4a9edd 25%,#2575c4 40%,#1a6ab5 50%,#2575c4 60%,#4a9edd 75%,#b0c4de 92%,rgba(240,242,245,.3) 100%);border-radius:1px;flex-shrink:0;z-index:2;box-shadow:inset 0 0 8px rgba(0,0,0,.1)}
+.spiral-ring{width:38px;height:20px;border-radius:50%;background:linear-gradient(170deg,#e8e8e8 0%,#c0c0c0 8%,#a0a0a0 18%,#787878 35%,#606060 50%,#787878 65%,#a0a0a0 82%,#c8c8c8 92%,#e0e0e0 100%);box-shadow:0 4px 6px rgba(0,0,0,.35),0 -2px 3px rgba(255,255,255,.4)}
+.spiral-ring::before{content:"";position:absolute;inset:3px 6px;border-radius:50%;background:linear-gradient(175deg,#909090 0%,#b8b8b8 25%,#d8d8d8 45%,#c0c0c0 55%,#a0a0a0 75%,#808080 100%);box-shadow:inset 0 3px 5px rgba(0,0,0,.45)}
+.spiral-ring::after{content:"";position:absolute;top:2px;left:25%;width:50%;height:6px;background:linear-gradient(180deg,rgba(255,255,255,.85),rgba(255,255,255,0));border-radius:50%}
+.spiral-ring{position:relative}
+h1.book-title{font-family:var(--font-serif);font-size:2.4em;color:var(--heading);margin-bottom:5px;line-height:1.2}
+h2.section-title{font-family:var(--font);font-size:1.25em;color:var(--heading);font-weight:800;margin:18px 0 10px;padding:8px 14px;border-radius:10px;background:linear-gradient(135deg,rgba(21,101,192,.08),rgba(21,101,192,.02));border-left:4px solid var(--accent);display:flex;align-items:center;gap:8px;letter-spacing:.3px}
+h2.section-title i{font-size:.85em;opacity:.7}
+h3.sub-title{font-size:1.02em;color:var(--accent2);font-weight:700;margin:14px 0 6px;display:flex;align-items:center;gap:6px}
+h3.sub-title::before{content:'';width:4px;height:100%;min-height:16px;background:var(--accent2);border-radius:2px;display:inline-block}
+p{line-height:1.7;margin-bottom:.6rem;font-size:.9em}
+.def-box{background:linear-gradient(135deg,rgba(21,101,192,.06),rgba(21,101,192,.02));border-left:4px solid var(--accent);padding:12px 16px;border-radius:0 12px 12px 0;margin:10px 0;transition:transform .2s,box-shadow .2s}
+.def-box:hover{transform:translateX(4px);box-shadow:0 2px 12px rgba(21,101,192,.1)}
+.formula-box{border:2px solid rgba(21,101,192,.2);padding:14px;border-radius:14px;text-align:center;margin:12px 0;background:linear-gradient(135deg,rgba(21,101,192,.04),transparent)}
+.example-box{background:linear-gradient(135deg,rgba(0,201,167,.06),rgba(0,201,167,.02));border-left:4px solid var(--accent3);padding:12px 16px;border-radius:0 12px 12px 0;margin:10px 0;transition:transform .2s}
+.example-box:hover{transform:translateX(4px)}
+.example-box::before{content:'✅ Ejemplo';display:block;font-weight:800;color:var(--accent3);font-size:.7rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px}
+.note-box{background:linear-gradient(135deg,rgba(255,215,0,.08),rgba(255,215,0,.02));border-left:4px solid var(--gold);padding:12px 16px;border-radius:0 12px 12px 0;margin:10px 0;transition:transform .2s}
+.note-box:hover{transform:translateX(4px)}
+.warning-box{background:linear-gradient(135deg,rgba(255,107,107,.06),rgba(255,107,107,.02));border-left:4px solid var(--accent2);padding:12px 16px;border-radius:0 12px 12px 0;margin:10px 0;font-weight:600;transition:transform .2s}
+.warning-box:hover{transform:translateX(4px)}
+img.book-img{max-width:100%;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,.08);margin:6px 0}
+figcaption{text-align:center;font-size:.72em;color:var(--accent);font-style:italic;margin-bottom:6px}
+table.styled-table{width:100%;border-collapse:separate;border-spacing:0;margin:10px 0;font-size:.85em;border-radius:10px;overflow:hidden;box-shadow:0 1px 8px rgba(0,0,0,.06)}
+table.styled-table thead th{background:linear-gradient(135deg,var(--accent),#1976d2);color:#fff;padding:9px 10px;text-align:left;font-weight:600;font-size:.82em}
+table.styled-table tbody td{padding:7px 10px;border-bottom:1px solid rgba(0,0,0,.05)}
+table.styled-table tbody tr:hover{background:rgba(21,101,192,.06)}
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.compare-card{background:var(--page-bg);border-radius:8px;padding:10px;border-top:3px solid var(--accent);box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.compare-card:nth-child(2){border-top-color:var(--accent2)}
+.cover-page{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:linear-gradient(160deg,#0a1628 0%,#1a2a4a 30%,#1565c0 60%,#0d47a1 100%)!important;color:#fff!important;background-image:none!important;position:relative;overflow:hidden}
+.cover-page::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 200'%3E%3Cpath d='M0,100 Q50,50 100,100 T200,100 T300,100 T400,100' fill='none' stroke='rgba(255,255,255,.06)' stroke-width='2'/%3E%3Cpath d='M0,120 Q50,70 100,120 T200,120 T300,120 T400,120' fill='none' stroke='rgba(255,255,255,.04)' stroke-width='2'/%3E%3C/svg%3E") repeat;background-size:400px 200px;animation:waveScroll 8s linear infinite;opacity:.8}
+@keyframes waveScroll{0%{background-position:0 0}100%{background-position:400px 0}}
+.cover-page::after{content:'';position:absolute;bottom:0;left:0;right:0;height:120px;background:linear-gradient(transparent,rgba(10,22,40,.6));pointer-events:none}
+.cover-page h1{color:#fff;font-size:2.6em;text-shadow:0 3px 20px rgba(0,0,0,.4);position:relative;z-index:1;font-family:var(--font-serif)}
+.cover-page .subtitle{font-size:1.2em;opacity:.9;margin:6px 0 18px;border-bottom:2px solid rgba(255,255,255,.3);padding-bottom:8px;display:inline-block;position:relative;z-index:1;letter-spacing:1px}
+.cover-page .badge{background:rgba(255,255,255,.1);padding:10px 28px;border-radius:25px;font-weight:600;margin:12px 0;backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.15);position:relative;z-index:1;transition:transform .3s}
+.cover-page .badge:hover{transform:scale(1.05)}
+.cover-page .author{margin-top:25px;font-size:.9em;opacity:.7;position:relative;z-index:1}
+.cover-wave{font-size:4.5em;margin-bottom:12px;opacity:.9;position:relative;z-index:1;animation:coverFloat 3s ease-in-out infinite}
+@keyframes coverFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.toc-item{padding:10px 14px;border-radius:10px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:all .25s;margin-bottom:3px;border:1px solid transparent}
+.toc-item:hover{background:linear-gradient(135deg,rgba(21,101,192,.08),rgba(21,101,192,.03));border-color:rgba(21,101,192,.15);transform:translateX(6px)}
+.toc-num{background:linear-gradient(135deg,var(--accent),#1976d2);color:#fff;width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.78em;font-weight:700;flex-shrink:0;box-shadow:0 2px 8px rgba(21,101,192,.25)}
+.toc-num.sim{background:linear-gradient(135deg,var(--accent2),#e53935)}
+.sim-container{background:var(--page-bg);border:2px solid var(--accent);border-radius:10px;padding:10px;margin:10px 0}
+.sim-container canvas{width:100%;border-radius:6px;background:#0a1628;display:block}
+.sim-controls{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;align-items:center}
+.sim-controls label{font-size:.78em;font-weight:600;color:var(--heading);display:flex;align-items:center;gap:3px}
+.sim-controls input[type=range]{width:90px;accent-color:var(--accent)}
+.sim-controls button{background:var(--accent);color:#fff;border:none;padding:4px 12px;border-radius:5px;cursor:pointer;font-size:.78em;font-weight:600;transition:background .2s}
+.sim-controls button:hover{background:#0a5a8a}
+.sim-readout{font-family:var(--font-mono);font-size:.75em;color:var(--accent);background:rgba(13,110,170,.08);padding:5px 8px;border-radius:5px;margin-top:5px}
+.metric-card{background:var(--page-bg);border:1px solid rgba(0,0,0,.06);border-radius:6px;padding:5px 8px;text-align:center}
+.metric-card .metric-label{font-size:.58rem;color:var(--text);opacity:.5;text-transform:uppercase;letter-spacing:.5px}
+.metric-card .metric-value{font-family:var(--font-mono);font-size:.85rem;color:var(--accent);font-weight:700}
+.sim-metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:4px;margin:5px 0}
+.sim-btn{padding:4px 10px;border:1px solid var(--accent);background:rgba(21,101,192,.06);color:var(--accent);border-radius:5px;cursor:pointer;font-size:.72em;font-weight:700;transition:all .2s}
+.sim-btn:hover,.sim-btn.active{background:var(--accent);color:#fff}
+#nav-bar{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);display:flex;gap:8px;padding:8px 16px;background:var(--nav-bg);border-radius:50px;box-shadow:0 8px 40px rgba(0,0,0,.18);backdrop-filter:blur(20px);z-index:1000;align-items:center;border:1px solid rgba(255,255,255,.12)}
+.nav-btn{width:42px;height:42px;border-radius:50%;border:none;background:linear-gradient(145deg,var(--accent),#1976d2);color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .25s;position:relative;overflow:hidden}
+.nav-btn:hover{transform:scale(1.12) translateY(-2px);box-shadow:0 6px 20px rgba(21,101,192,.45)}
+.nav-btn:active{transform:scale(.95)}
+.nav-btn:disabled{opacity:.25;cursor:not-allowed;transform:none;box-shadow:none}
+.quiz-q{background:var(--page-bg);border-radius:8px;padding:10px;margin:6px 0;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.quiz-q h4{color:var(--accent);margin-bottom:5px;font-size:.85em}
+.quiz-opt{display:block;width:100%;padding:6px 10px;margin:3px 0;border-radius:8px;border:2px solid rgba(0,0,0,.06);cursor:pointer;transition:all .2s;font-size:.82em;text-align:left;background:none;color:var(--text);font-family:var(--font)}
+.quiz-opt:hover{border-color:var(--accent);background:rgba(21,101,192,.05)}
+.quiz-opt.correct{border-color:var(--accent3);background:rgba(0,201,167,.1);font-weight:700}
+.quiz-opt.wrong{border-color:var(--accent2);background:rgba(255,107,107,.1)}
+.quiz-feedback{margin-top:4px;font-size:.78em;display:none;color:var(--accent3)}
+details summary{color:var(--accent);cursor:pointer;font-weight:700;font-size:.82em}
+#chat-toggle{position:fixed;bottom:80px;left:16px;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#e8dfd0,#c9b896);border:3px solid #4a90d9;color:#333;font-size:22px;cursor:pointer;z-index:2001;box-shadow:0 4px 20px rgba(74,144,217,.4);transition:box-shadow .3s;overflow:hidden;padding:0;display:flex;align-items:center;justify-content:center}
+#chat-toggle:hover{box-shadow:0 6px 25px rgba(74,144,217,.6)}
+#chat-bubble{position:fixed;bottom:140px;left:12px;background:#fff;border:1px solid #e0e0e0;border-radius:16px;padding:10px 14px;max-width:250px;font-size:.78em;line-height:1.4;color:#333;box-shadow:0 4px 20px rgba(0,0,0,.12);z-index:2000;opacity:0;transition:opacity .4s;pointer-events:none;font-style:italic}
+#chat-bubble.visible{opacity:1;pointer-events:auto}
+#chat-bubble::after{content:"";position:absolute;bottom:-8px;left:30px;width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;border-top:8px solid #fff}
+#chat-panel{position:fixed;left:16px;bottom:140px;width:400px;max-height:560px;background:linear-gradient(180deg,#3b5998 0%,#4a6fb5 8%,var(--page-bg) 8%);border-radius:18px;box-shadow:0 10px 50px rgba(0,0,0,.3);z-index:2002;display:none;flex-direction:column;overflow:hidden;border:none}
+#chat-panel.open{display:flex;animation:chatSlide .3s ease}
+@keyframes chatSlide{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+#chat-header{padding:12px 16px 8px;background:linear-gradient(135deg,#3b5998,#4a6fb5);color:#fff;display:flex;align-items:center;gap:12px}
+#chat-header .sci-info{flex:1}
+#chat-header .sci-info h3{font-size:.95em;font-weight:700;margin:0}
+#chat-header .sci-info small{font-size:.7em;opacity:.8}
+#chat-header .header-actions{display:flex;gap:6px}
+#chat-header .header-actions button{background:rgba(255,255,255,.15);border:none;color:#fff;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;transition:background .2s}
+#chat-header .header-actions button:hover{background:rgba(255,255,255,.3)}
+#scientist-selector{display:flex;gap:6px;padding:8px 12px;border-bottom:1px solid rgba(0,0,0,.06);overflow-x:auto;scrollbar-width:none;background:rgba(59,89,152,.03)}
+.sci-btn{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 8px;border-radius:10px;border:2px solid transparent;cursor:pointer;transition:all .2s;background:none;font-size:.65em;font-weight:600;color:var(--text);opacity:.65}
+.sci-btn:hover,.sci-btn.active{border-color:#4a6fb5;opacity:1;background:rgba(59,89,152,.08)}
+.sci-btn .sci-emoji{font-size:1.8em}
+#chat-messages{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px;min-height:220px;max-height:320px}
+.msg{max-width:85%;padding:10px 14px;border-radius:14px;font-size:.85em;line-height:1.5;animation:msgIn .3s ease;word-wrap:break-word}
+.msg.user{align-self:flex-end;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border-bottom-right-radius:4px}
+.msg.bot{align-self:flex-start;background:#f0f2f5;color:#1c1e21;border-bottom-left-radius:4px}
+.msg .sci-name{font-weight:700;color:#3b5998;font-size:.72em;margin-bottom:3px;display:block}
+@keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+#chat-input-area{padding:10px 12px;border-top:1px solid rgba(0,0,0,.08);display:flex;gap:8px}
+#chat-input{flex:1;padding:8px 14px;border-radius:20px;border:2px solid rgba(59,89,152,.15);font-size:.85em;outline:none;background:#f0f2f5;color:var(--text);font-family:var(--font)}
+#chat-input:focus{border-color:#4a6fb5}
+#chat-send{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#4a90d9,#3b5998);border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform .2s}
+#chat-send:hover{transform:scale(1.1)}
+#chat-suggestions{display:flex;flex-wrap:wrap;gap:6px;padding:8px 12px;border-top:1px solid rgba(0,0,0,.05)}
+.chat-suggest{padding:6px 12px;border-radius:16px;border:1px solid rgba(59,89,152,.2);font-size:.75em;cursor:pointer;background:none;color:var(--text);transition:all .2s;font-family:var(--font)}
+.chat-suggest:hover{background:rgba(59,89,152,.08);border-color:#4a6fb5}
+.typing-dots{display:flex;gap:4px;padding:8px;align-self:flex-start}
+.td{width:6px;height:6px;border-radius:50%;background:#6366f1;animation:tdb .6s infinite alternate}
+.td:nth-child(2){animation-delay:.2s}.td:nth-child(3){animation-delay:.4s}
+@keyframes tdb{to{transform:translateY(-6px);opacity:.3}}
+#api-key-section{padding:12px 14px;text-align:center;font-size:.8em;border-bottom:1px solid rgba(0,0,0,.06);background:rgba(59,89,152,.03)}
+#api-key-section input{width:100%;padding:8px 12px;border-radius:20px;border:2px solid rgba(59,89,152,.15);font-family:monospace;font-size:.85em;margin:6px 0;outline:none;background:#f0f2f5;color:var(--text)}
+#api-key-section button{background:linear-gradient(135deg,#4a90d9,#3b5998);color:#fff;border:none;padding:7px 20px;border-radius:20px;cursor:pointer;font-weight:600;transition:transform .2s}
+#api-key-section button:hover{transform:scale(1.05)}
+#zoom-controls{position:fixed;bottom:80px;right:16px;display:flex;flex-direction:column;gap:6px;z-index:999}
+#zoom-controls button{width:36px;height:36px;border-radius:50%;border:2px solid var(--accent);background:var(--nav-bg);color:var(--accent);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);transition:all .2s}
+#zoom-controls button:hover{background:var(--accent);color:#fff;transform:scale(1.1)}
+#zoom-level{font-size:10px;text-align:center;color:var(--text);opacity:.6;font-weight:700}
+#narrator-btn{position:fixed;bottom:80px;right:60px;width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#27ae60,#2ecc71);border:none;color:#fff;font-size:18px;cursor:pointer;z-index:1001;box-shadow:0 3px 15px rgba(39,174,96,.4);transition:all .3s;display:flex;align-items:center;justify-content:center}
+#narrator-btn:hover{transform:scale(1.1);box-shadow:0 5px 20px rgba(39,174,96,.5)}
+#narrator-btn.speaking{background:linear-gradient(135deg,#e74c3c,#c0392b);box-shadow:0 3px 15px rgba(231,76,60,.4);animation:narratorPulse 1s infinite}
+@keyframes narratorPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+#narrator-status{position:fixed;bottom:128px;right:42px;background:#fff;border:1px solid #e0e0e0;border-radius:12px;padding:6px 14px;font-size:.75em;color:#333;box-shadow:0 2px 12px rgba(0,0,0,.1);z-index:1000;opacity:0;transition:opacity .3s;pointer-events:none;font-weight:500}
+#narrator-status.visible{opacity:1}
+@media(max-width:768px){#book{width:98vw;height:85vh}.page{padding:18px 16px;font-size:13px}.compare-grid{grid-template-columns:1fr}#chat-panel{width:calc(100vw - 32px);left:16px;bottom:120px;max-height:55vh}}
+</style>
+</head>
+<body>
+<div id="progress-bar" style="width:0%"></div>
+<button id="dark-toggle" onclick="document.body.classList.toggle('dark')" title="Modo oscuro"><i class="fas fa-moon"></i></button>
+<span id="page-info"></span>
+<div id="book-container">
+<div id="book">
+<!-- SPREAD 0: Cover + TOC -->
+<div class="spread active" data-spread="0">
+<div class="page page-left cover-page">
+<div class="cover-wave" style="filter:drop-shadow(0 0 20px rgba(255,255,255,.3))">&#x2248;</div>
+<h1 class="book-title" style="font-size:2.4em;letter-spacing:2px">ONDAS EN CUERDAS TENSAS</h1>
+<div class="subtitle">Ondas Estacionarias y Arm&oacute;nicos</div>
+<div class="badge"><i class="fas fa-atom" style="margin-right:6px"></i> Cuaderno Interactivo</div>
+<div style="display:flex;gap:10px;margin:12px 0;position:relative;z-index:1"><span style="background:rgba(255,255,255,.1);padding:5px 12px;border-radius:15px;font-size:.72em;border:1px solid rgba(255,255,255,.15)"><i class="fas fa-flask"></i> Interactivo</span><span style="background:rgba(255,255,255,.1);padding:5px 12px;border-radius:15px;font-size:.72em;border:1px solid rgba(255,255,255,.15)"><i class="fas fa-robot"></i> IA Chat</span><span style="background:rgba(255,255,255,.1);padding:5px 12px;border-radius:15px;font-size:.72em;border:1px solid rgba(255,255,255,.15)"><i class="fas fa-chart-line"></i> Simulaciones</span></div>
+<div class="author">Presentado por: Juan Jos&eacute; P&eacute;rez Herrera &amp; Deisy Patricia Angarita<br><small style="opacity:.6">Universidad Tecnol&oacute;gica de Pereira &mdash; 2026</small></div>
+</div>
+<div class="spiral"><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div></div>
+<div class="page page-right" style="padding-top:30px">
+<h2 class="section-title"><i class="fas fa-list"></i> &Iacute;ndice de Contenidos</h2>
+<div class="toc-item" onclick="goTo(1)"><span class="toc-num">1</span> Naturaleza de las Ondas</div>
+<div class="toc-item" onclick="goTo(1)"><span class="toc-num">2</span> Magnitudes de una Onda</div>
+<div class="toc-item" onclick="goTo(2)"><span class="toc-num">3</span> Velocidad en Cuerda Tensa</div>
+<div class="toc-item" onclick="goTo(2)"><span class="toc-num">4</span> Ecuaci&oacute;n de Onda</div>
+<div class="toc-item" onclick="goTo(3)"><span class="toc-num">5</span> Ondas Estacionarias</div>
+<div class="toc-item" onclick="goTo(3)"><span class="toc-num">6</span> Superposici&oacute;n y Batidos</div>
+<div class="toc-item" onclick="goTo(4)"><span class="toc-num sim">7</span><i class="fas fa-guitar" style="color:var(--accent2)"></i> La Guitarra y Simulador</div>
+<div class="toc-item" onclick="goTo(5)"><span class="toc-num">8</span> Ejercicios tipo ICFES</div>
+<div class="toc-item" onclick="goTo(5)"><span class="toc-num">9</span> Problemas de Desarrollo</div>
+<div class="toc-item" onclick="goTo(6)"><span class="toc-num">10</span> Resumen y Bibliograf&iacute;a</div>
+<span class="page-num">ii</span>
+</div>
+</div>
+
+<!-- SPREAD 1 -->
+<div class="spread" data-spread="1">
+<div class="page page-left">
+
+<h2 class="section-title"><i class="fas fa-book-open"></i> Naturaleza de las Ondas</h2>
+<div class="def-box"><p>Una <strong>onda</strong> es una perturbación que se propaga transportando <em>energía</em> sin transportar materia. Las partículas oscilan alrededor de su equilibrio mientras la perturbación avanza.</p></div>
+<h3>Clasificación según el medio</h3>
+<div class="compare-grid">
+<div class="compare-card"><h4>🌊 Ondas Mecánicas</h4><p>Requieren un <strong>medio material</strong>. Ejemplos: ondas en cuerdas, sonido, olas del mar.</p></div>
+<div class="compare-card"><h4>💡 Ondas Electromagnéticas</h4><p>Se propagan incluso en el <strong>vacío</strong>. Ejemplos: luz, rayos X, microondas, WiFi.</p></div>
+</div>
+<h3>Según la dirección de oscilación</h3>
+<div class="compare-grid">
+<div class="compare-card"><h4>↕️ Transversales</h4><p>Oscilación <strong>perpendicular</strong> a la propagación. Produce crestas y valles.</p></div>
+<div class="compare-card"><h4>↔️ Longitudinales</h4><p>Oscilación <strong>paralela</strong> a la propagación. Produce compresiones y rarefacciones.</p></div>
+</div>
+<table class="styled-table"><thead><tr><th>Característica</th><th>Transversal</th><th>Longitudinal</th></tr></thead>
+<tbody>
+<tr><td>Oscilación</td><td>⊥ propagación</td><td>∥ propagación</td></tr>
+<tr><td>Elementos</td><td>Crestas y valles</td><td>Compresiones</td></tr>
+<tr><td>Polarización</td><td>Sí</td><td>No</td></tr>
+<tr><td>Ejemplo</td><td>Cuerda de guitarra</td><td>Sonido</td></tr>
+</tbody></table>
+<span class="page-num">pág. 1-2</span>
+
+<span class="page-num">1</span>
+</div>
+<div class="spiral"><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div></div>
+<div class="page page-right">
+
+<h2 class="section-title"><i class="fas fa-book-open"></i> Magnitudes de una Onda</h2>
+<div class="def-box"><p><strong>Amplitud (A):</strong> Desplazamiento máximo respecto al equilibrio. Unidad: metros (m).</p></div>
+<div class="def-box"><p><strong>Longitud de onda (λ):</strong> Distancia entre dos puntos en fase consecutivos. Unidad: m.</p></div>
+<div class="def-box"><p><strong>Período (T):</strong> Tiempo de un ciclo completo. Unidad: s. <strong>Frecuencia (f):</strong> Ciclos/segundo. Unidad: Hz.</p></div>
+<div class="formula-box">\[ T = \frac{1}{f} \qquad v = \lambda \cdot f = \frac{\lambda}{T} \]</div>
+<div class="def-box"><p><strong>Número de onda (k):</strong> \(k = \frac{2\pi}{\lambda}\) [rad/m]. <strong>Frecuencia angular (ω):</strong> \(\omega = 2\pi f\) [rad/s].</p></div>
+<div class="formula-box">\[ v = \frac{\omega}{k} = \lambda \cdot f \]</div>
+<figure><img src="IMAGENES/Ecuación de la onda resultante.png" alt="Superposición de ondas" class="book-img"><figcaption>Superposición de onda incidente y reflejada formando onda estacionaria.</figcaption></figure>
+<table class="styled-table"><thead><tr><th>Magnitud</th><th>Símbolo</th><th>Unidad SI</th><th>Fórmula</th></tr></thead>
+<tbody>
+<tr><td>Amplitud</td><td>\(A\)</td><td>m</td><td>—</td></tr>
+<tr><td>Longitud de onda</td><td>\(\lambda\)</td><td>m</td><td>\(v/f\)</td></tr>
+<tr><td>Período</td><td>\(T\)</td><td>s</td><td>\(1/f\)</td></tr>
+<tr><td>Frecuencia</td><td>\(f\)</td><td>Hz</td><td>\(1/T\)</td></tr>
+<tr><td>Velocidad</td><td>\(v\)</td><td>m/s</td><td>\(\lambda f\)</td></tr>
+<tr><td>Número de onda</td><td>\(k\)</td><td>rad/m</td><td>\(2\pi/\lambda\)</td></tr>
+<tr><td>Frec. angular</td><td>\(\omega\)</td><td>rad/s</td><td>\(2\pi f\)</td></tr>
+</tbody></table>
+<span class="page-num">pág. 3-4</span>
+
+<span class="page-num">2</span>
+</div>
+</div>
+
+
+<!-- SPREAD 2 -->
+<div class="spread" data-spread="2">
+<div class="page page-left">
+
+<h2 class="section-title"><i class="fas fa-book-open"></i> Velocidad en Cuerda Tensa</h2>
+<figure><img src="IMAGENES/VELOCIDAD DE ONDA EN UAN CUERDA  TENSA.png" alt="Análisis de fuerzas sobre pulso en cuerda tensa" class="book-img"><figcaption>Análisis de fuerzas sobre un segmento de pulso: tensión \(\vec{F}\), componentes, radio \(r\) y arco \(\Delta s\).</figcaption></figure>
+<div class="note-box"><p>⚠ Nota: el archivo original dice "UAN CUERDA" — se corrigió a "UNA CUERDA".</p></div>
+<p><strong>Derivación:</strong> Masa del segmento: \(\Delta m = \mu \cdot 2r\theta\). Fuerza neta vertical:</p>
+<div class="formula-box">\[ F_y = 2T\sin\theta \approx 2T\theta \quad (\theta \text{ pequeño}) \]</div>
+<p>Igualando con la fuerza centrípeta: \(2T\theta = \frac{\mu \cdot 2r\theta \cdot v^2}{r}\)</p>
+<div class="formula-box" style="border-left-color:var(--accent);background:#dbeafe">\[ \boxed{v = \sqrt{\frac{T}{\mu}}} \]
+<p style="font-size:.8rem;color:var(--text)">\(T\) = tensión (N), \(\mu\) = densidad lineal (kg/m)</p></div>
+<p><strong>Conclusión:</strong> Mayor tensión → mayor velocidad. Mayor densidad → menor velocidad.</p>
+<h3>Ejemplo: Cuerda con Vibrador y Polea</h3>
+<figure><img src="IMAGENES/Ejemplo Cuerda con Vibrador y Polea.png" alt="Vibrador, cuerda, polea y masa colgante" class="book-img"><figcaption>Arreglo experimental: vibrador, cuerda con \(\mu\), polea y masa \(m\).</figcaption></figure>
+<div class="example-box">
+<p><strong>Problema:</strong> \(L=2\) m, \(\mu=0{,}002\) kg/m. Ondas estacionarias con \(m_1=16\) kg y \(m_2=25\) kg.</p>
+<p><strong>a)</strong> De \(n_1\sqrt{m_1}=n_2\sqrt{m_2}\): \(4n_1=5n_2 \implies n_1=5, n_2=4\)</p>
+\[ f = \frac{5}{4}\sqrt{\frac{16\times9{,}8}{0{,}002}} = \frac{5}{4}\times280 = 350\text{ Hz} \]
+<p><strong>b)</strong> Para \(n=1\): \(m_{\max} = \frac{(2Lf)^2\mu}{g} \approx 400\) kg</p>
+</div>
+<span class="page-num">pág. 5-6</span>
+
+<span class="page-num">3</span>
+</div>
+<div class="spiral"><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div></div>
+<div class="page page-right">
+
+<h2 class="section-title"><i class="fas fa-book-open"></i> Ecuación General de Onda</h2>
+<div class="formula-box">\[ y(x,t) = A\sin(kx - \omega t + \varphi_0) \]
+<p style="font-size:.8rem;color:var(--text)">\(A\)=amplitud, \(k=2\pi/\lambda\), \(\omega=2\pi f\), \(\varphi_0\)=fase inicial</p></div>
+<p>Si la onda viaja en \(-x\): \(y = A\sin(kx + \omega t)\). La velocidad de fase es \(v = \omega/k\).</p>
+<h3>Significado físico</h3>
+<p>Para un instante \(t\) fijo, \(y(x)\) muestra el perfil espacial (foto de la onda). Para una posición \(x_0\) fija, \(y(t)\) muestra cómo oscila ese punto en el tiempo — como un osciloscopio.</p>
+<div class="def-box"><p>La <strong>velocidad de propagación</strong> \(v\) depende solo del medio. La <strong>velocidad de la partícula</strong> es \(v_y = \partial y/\partial t = -A\omega\cos(kx-\omega t)\).</p></div>
+<h3>Ejemplo numérico</h3>
+<div class="example-box">
+<p>Una onda \(y = 0{,}03\sin(4\pi x - 8\pi t)\) en SI. Determine \(A\), \(\lambda\), \(f\), \(v\).</p>
+<p>\(A=0{,}03\) m, \(k=4\pi \implies \lambda=0{,}5\) m, \(\omega=8\pi \implies f=4\) Hz, \(v=\lambda f=2\) m/s ✓</p>
+</div>
+<span class="page-num">pág. 7-8</span>
+
+<span class="page-num">4</span>
+</div>
+</div>
+
+
+<!-- SPREAD 3 -->
+<div class="spread" data-spread="3">
+<div class="page page-left">
+
+<h2 class="section-title"><i class="fas fa-book-open"></i> Ondas Estacionarias</h2>
+<figure><img src="IMAGENES/Ecuación de la onda resultante.png" alt="Superposición formando onda estacionaria" class="book-img"><figcaption>Onda incidente + reflejada = onda estacionaria. Distancia entre nodos = \(\lambda/2\).</figcaption></figure>
+<div class="formula-box"><p style="font-weight:700;margin-bottom:4px">Derivación:</p>
+\[ y_1 + y_2 = A[\sin(\omega t+kx)-\sin(\omega t-kx)] \]
+\[ \boxed{y(x,t) = 2A\sin(kx)\cos(\omega t)} \]</div>
+<div class="def-box"><p><strong>Nodos:</strong> donde \(\sin(kx)=0\) → \(x_{\text{nodo}} = j\cdot\lambda/2\)</p></div>
+<div class="def-box"><p><strong>Vientres:</strong> donde \(|\sin(kx)|=1\) → \(x_{\text{vientre}} = (2j+1)\lambda/4\)</p></div>
+<h3>Condición de resonancia (cuerda fija-fija)</h3>
+<div class="formula-box" style="border-left-color:var(--accent);background:#dbeafe">
+\[ \lambda_n = \frac{2L}{n} \qquad f_n = \frac{n}{2L}\sqrt{\frac{T}{\mu}} = n\cdot f_1 \]</div>
+<table class="styled-table"><thead><tr><th>\(n\)</th><th>Nombre</th><th>\(\lambda_n\)</th><th>\(f_n\)</th><th>Nodos</th><th>Vientres</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Fundamental</td><td>\(2L\)</td><td>\(f_1\)</td><td>2</td><td>1</td></tr>
+<tr><td>2</td><td>2.º armónico</td><td>\(L\)</td><td>\(2f_1\)</td><td>3</td><td>2</td></tr>
+<tr><td>3</td><td>3.er armónico</td><td>\(2L/3\)</td><td>\(3f_1\)</td><td>4</td><td>3</td></tr>
+<tr><td>\(n\)</td><td>\(n\)-ésimo</td><td>\(2L/n\)</td><td>\(nf_1\)</td><td>\(n+1\)</td><td>\(n\)</td></tr>
+</tbody></table>
+<h3>Ejemplo: Afinación del Violín</h3>
+<figure><img src="IMAGENES/Ejemplo Afinación de una Cuerda de Violín.png" alt="Afinación violín" class="book-img"><figcaption>Cuerda al aire \(L\) (Sol 392 Hz) y acortada a \(l\) (La 440 Hz).</figcaption></figure>
+<div class="example-box"><p>\(l = \frac{392}{440}\times0{,}35 = 0{,}312\) m. Dedo a \(3{,}8\) cm de la cejuela.</p></div>
+<span class="page-num">pág. 9-10</span>
+
+<span class="page-num">5</span>
+</div>
+<div class="spiral"><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div></div>
+<div class="page page-right">
+
+<h2 class="section-title"><i class="fas fa-book-open"></i> Superposición y Batidos</h2>
+<div class="def-box"><p><strong>Principio de superposición:</strong> \(y_{\text{total}} = y_1 + y_2 + \cdots + y_n\). El desplazamiento resultante es la suma algebraica de los individuales.</p></div>
+<p><strong>Interferencia constructiva:</strong> ondas en fase → amplitudes se suman.<br><strong>Interferencia destructiva:</strong> ondas en contrafase → amplitudes se anulan.</p>
+<h3>Batidos (Beats)</h3>
+<div class="formula-box">
+\[ y_1+y_2 = 2A\cos\!\left(\pi(f_1-f_2)t\right)\sin\!\left(\pi(f_1+f_2)t\right) \]
+\[ \boxed{f_{\text{bat}} = |f_1 - f_2|} \qquad T_{\text{bat}} = \frac{1}{f_{\text{bat}}} \]</div>
+<div class="note-box"><p>Los batidos son la base de la afinación musical. Cuando \(f_{\text{bat}} \to 0\), la cuerda está afinada.</p></div>
+<div class="example-box"><p>Dos diapasones: \(f_1=440\) Hz, \(f_2=444\) Hz → \(f_{\text{bat}}=4\) Hz, \(T_{\text{bat}}=0{,}25\) s. El sonido "pulsa" 4 veces/segundo.</p></div>
+<span class="page-num">pág. 11-12</span>
+
+<span class="page-num">6</span>
+</div>
+</div>
+
+
+
+<!-- SPREAD 4: GUITARRA + SIMULADOR -->
+<div class="spread" data-spread="4">
+<div class="page page-left">
+<h2 class="section-title"><i class="fas fa-guitar"></i> La Guitarra y la Fu00edsica Musical</h2>
+<figure><img src="IMAGENES/Partes de la Guitarra.png" alt="Partes de la guitarra" class="book-img"><figcaption>Partes principales de la guitarra clu00e1sica espau00f1ola.</figcaption></figure>
+<figure><img src="IMAGENES/Afinaciu00f3n Estu00e1ndar.png" alt="Afinaciu00f3n estu00e1ndar" class="book-img"><figcaption>Notas en el diapasu00f3n u2014 afinaciu00f3n estu00e1ndar E-A-D-G-B-E.</figcaption></figure>
+<table class="styled-table"><thead><tr><th>Cuerda</th><th>Nota</th><th>Hz</th></tr></thead>
+<tbody>
+<tr><td>1.u00aa</td><td>Miu2084</td><td>329,6</td></tr><tr><td>2.u00aa</td><td>Siu2083</td><td>246,9</td></tr>
+<tr><td>3.u00aa</td><td>Solu2083</td><td>196,0</td></tr><tr><td>4.u00aa</td><td>Reu2083</td><td>146,8</td></tr>
+<tr><td>5.u00aa</td><td>Lau2082</td><td>110,0</td></tr><tr><td>6.u00aa</td><td>Miu2082</td><td>82,4</td></tr>
+</tbody></table>
+<div class="formula-box">\[ f_n = f_0 \times 2^{n/12} \]<p style="font-size:.8rem;color:var(--text)">Cada traste = un semitono (factor \(2^{1/12} \approx 1{,}0595\)).</p></div>
+<span class="page-num">7</span>
+</div>
+<div class="spiral"><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div></div>
+<div class="page page-right" style="padding:8px;display:flex;flex-direction:column">
+<div style="display:flex;justify-content:space-between;align-items:center;padding:4px 8px;margin-bottom:4px">
+<span style="font-size:.78em;font-weight:700;color:var(--accent)"><i class="fas fa-gamepad"></i> SIMULADOR ACu00daSTICO EN VIVO</span>
+<button onclick="document.getElementById('sim-guitar-frame').requestFullscreen?.()" style="background:var(--accent);color:#fff;border:none;padding:3px 10px;border-radius:5px;font-size:.7em;cursor:pointer;font-weight:600"><i class="fas fa-expand"></i> Pantalla completa</button>
+</div>
+<iframe id="sim-guitar-frame" src="guitarra.html" style="flex:1;width:100%;border:2px solid var(--accent);border-radius:10px;background:#05050a;min-height:280px" allow="autoplay" loading="lazy"></iframe>
+<p style="font-size:.68em;text-align:center;color:var(--text);opacity:.5;margin-top:4px"><i class="fas fa-mouse-pointer"></i> Haz clic en los trastes y cuerdas para interactuar</p>
+<span class="page-num">8</span>
+</div>
+</div>
+
+<!-- SPREAD 5 -->
+<div class="spread" data-spread="5">
+<div class="page page-left">
+
+<h2 class="section-title"><i class="fas fa-book-open"></i> Ejercicios tipo ICFES</h2>
+<div class="quiz-q" id="q1"><h4>1. Velocidad en cuerda con T=80 N, μ=0,005 kg/m:</h4>
+<div class="quiz-opt" onclick="ck(this,'q1',1)">A) 126,5 m/s ✓</div><div class="quiz-opt" onclick="ck(this,'q1',0)">B) 0,4 m/s</div><div class="quiz-opt" onclick="ck(this,'q1',0)">C) 16.000 m/s</div><div class="quiz-opt" onclick="ck(this,'q1',0)">D) 0,008 m/s</div>
+<div class="quiz-feedback" id="q1-fb">\(v=\sqrt{80/0{,}005} \approx 126{,}5\) m/s</div></div>
+<div class="quiz-q" id="q2"><h4>2. λ del 3er armónico en L=1 m:</h4>
+<div class="quiz-opt" onclick="ck(this,'q2',0)">A) 2 m</div><div class="quiz-opt" onclick="ck(this,'q2',0)">B) 1 m</div><div class="quiz-opt" onclick="ck(this,'q2',1)">C) 2/3 m ≈ 0,667 m ✓</div><div class="quiz-opt" onclick="ck(this,'q2',0)">D) 1/3 m</div>
+<div class="quiz-feedback" id="q2-fb">\(\lambda_n=2L/n=2/3\) m</div></div>
+<div class="quiz-q" id="q3"><h4>3. Batidos con 256 Hz y 260 Hz:</h4>
+<div class="quiz-opt" onclick="ck(this,'q3',0)">A) 516</div><div class="quiz-opt" onclick="ck(this,'q3',1)">B) 4 ✓</div><div class="quiz-opt" onclick="ck(this,'q3',0)">C) 258</div><div class="quiz-opt" onclick="ck(this,'q3',0)">D) 2</div>
+<div class="quiz-feedback" id="q3-fb">\(f_{bat}=|260-256|=4\) Hz</div></div>
+<div class="quiz-q" id="q4"><h4>4. Amplitud siempre cero en onda estacionaria:</h4>
+<div class="quiz-opt" onclick="ck(this,'q4',0)">A) Vientres</div><div class="quiz-opt" onclick="ck(this,'q4',1)">B) Nodos ✓</div><div class="quiz-opt" onclick="ck(this,'q4',0)">C) Crestas</div><div class="quiz-opt" onclick="ck(this,'q4',0)">D) Valles</div>
+<div class="quiz-feedback" id="q4-fb">Nodos: \(\sin(kx)=0\)</div></div>
+<div class="quiz-q" id="q5"><h4>5. v con f=500 Hz y λ=0,68 m:</h4>
+<div class="quiz-opt" onclick="ck(this,'q5',0)">A) 735</div><div class="quiz-opt" onclick="ck(this,'q5',1)">B) 340 m/s ✓</div><div class="quiz-opt" onclick="ck(this,'q5',0)">C) 170</div><div class="quiz-opt" onclick="ck(this,'q5',0)">D) 500,68</div>
+<div class="quiz-feedback" id="q5-fb">\(v=\lambda f=0{,}68\times500=340\) m/s</div></div>
+<div class="quiz-q" id="q6"><h4>6. Se duplica T (μ cte), la velocidad:</h4>
+<div class="quiz-opt" onclick="ck(this,'q6',0)">A) Se duplica</div><div class="quiz-opt" onclick="ck(this,'q6',1)">B) ×√2 ≈ 1,41 ✓</div><div class="quiz-opt" onclick="ck(this,'q6',0)">C) ×4</div><div class="quiz-opt" onclick="ck(this,'q6',0)">D) No cambia</div>
+<div class="quiz-feedback" id="q6-fb">\(v'=\sqrt{2}\,v\)</div></div>
+<div class="quiz-q" id="q7"><h4>7. Unidades de k:</h4>
+<div class="quiz-opt" onclick="ck(this,'q7',0)">A) Hz</div><div class="quiz-opt" onclick="ck(this,'q7',0)">B) m</div><div class="quiz-opt" onclick="ck(this,'q7',1)">C) rad/m ✓</div><div class="quiz-opt" onclick="ck(this,'q7',0)">D) m/s</div>
+<div class="quiz-feedback" id="q7-fb">\(k=2\pi/\lambda\) → rad/m</div></div>
+<div class="quiz-q" id="q8"><h4>8. Vientres en 5° armónico:</h4>
+<div class="quiz-opt" onclick="ck(this,'q8',0)">A) 4</div><div class="quiz-opt" onclick="ck(this,'q8',1)">B) 5 ✓</div><div class="quiz-opt" onclick="ck(this,'q8',0)">C) 6</div><div class="quiz-opt" onclick="ck(this,'q8',0)">D) 10</div>
+<div class="quiz-feedback" id="q8-fb">n vientres, n+1 nodos</div></div>
+<span class="page-num">pág. 21-22</span>
+
+<span class="page-num">11</span>
+</div>
+<div class="spiral"><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div></div>
+<div class="page page-right">
+
+<h2 class="section-title"><i class="fas fa-book-open"></i> Problemas de Desarrollo</h2>
+<div class="example-box"><h4>P1</h4><p>Cuerda: L=0,65m, μ=0,003 kg/m, T=100N. Halle v, f₁, f₃.</p>
+<details><summary>Ver solución</summary><p>v=√(100/0,003)≈182,6 m/s | f₁=v/2L≈140,5 Hz | f₃=3f₁≈421,4 Hz</p></details></div>
+<div class="example-box"><h4>P2</h4><p>\(y_1=3\sin(4\pi x-8\pi t)\), \(y_2=3\sin(4\pi x+8\pi t)\). Resultante, nodos, A_max.</p>
+<details><summary>Ver solución</summary><p>\(y=6\sin(4\pi x)\cos(8\pi t)\). Nodos: x=0, 0.25, 0.5 m. A_max=6 m.</p></details></div>
+<div class="example-box"><h4>P3</h4><p>Do₄ (262 Hz) → Mi₄ (330 Hz), L=32 cm. ¿Cuánto acortar?</p>
+<details><summary>Ver solución</summary><p>l=(262/330)×32=25,4 cm. Acortar 6,6 cm.</p></details></div>
+<div class="example-box"><h4>P4</h4><p>Cuerda 1,5 m vibra en 4° armónico a 200 Hz. Halle λ₄, f₁, v.</p>
+<details><summary>Ver solución</summary><p>λ₄=2(1,5)/4=0,75 m | f₁=200/4=50 Hz | v=0,75×200=150 m/s</p></details></div>
+<div class="example-box"><h4>P5</h4><p>6 batidos/s, un diapasón a 512 Hz. ¿Frecuencias posibles del otro?</p>
+<details><summary>Ver solución</summary><p>f₂ = 518 Hz o 506 Hz.</p></details></div>
+<span class="page-num">pág. 23-24</span>
+
+<span class="page-num">12</span>
+</div>
+</div>
+
+
+<!-- SPREAD 6 -->
+<div class="spread" data-spread="6">
+<div class="page page-left">
+
+<h2 class="section-title"><i class="fas fa-book-open"></i> Resumen de Fórmulas</h2>
+<table class="styled-table"><thead><tr><th>Concepto</th><th>Fórmula</th></tr></thead>
+<tbody>
+<tr><td>Velocidad de onda</td><td>\(v=\lambda f=\omega/k\)</td></tr>
+<tr><td>Velocidad en cuerda</td><td>\(v=\sqrt{T/\mu}\)</td></tr>
+<tr><td>Período/frecuencia</td><td>\(T=1/f\)</td></tr>
+<tr><td>Número de onda</td><td>\(k=2\pi/\lambda\)</td></tr>
+<tr><td>Frec. angular</td><td>\(\omega=2\pi f\)</td></tr>
+<tr><td>Onda viajera</td><td>\(y=A\sin(kx-\omega t)\)</td></tr>
+<tr><td>Onda estacionaria</td><td>\(y=2A\sin(kx)\cos(\omega t)\)</td></tr>
+<tr><td>Resonancia</td><td>\(f_n=\frac{n}{2L}\sqrt{T/\mu}\)</td></tr>
+<tr><td>Batidos</td><td>\(f_{bat}=|f_1-f_2|\)</td></tr>
+<tr><td>Escala cromática</td><td>\(f_n=f_0\times2^{n/12}\)</td></tr>
+</tbody></table>
+<h3>Glosario rápido</h3>
+<p><strong>Amplitud:</strong> desplazamiento máximo. <strong>Nodo:</strong> amplitud cero. <strong>Vientre:</strong> amplitud máxima. <strong>Armónico:</strong> múltiplo entero de f₁. <strong>Batido:</strong> variación periódica de amplitud. <strong>μ:</strong> masa/longitud.</p>
+<h3>Bibliografía</h3>
+<p style="font-size:.82rem">• Serway & Jewett (2018). <em>Física para ciencias e ingeniería</em>, Cap. 16-18.<br>• Resnick, Halliday & Walker (2014). <em>Fundamentals of Physics</em>, 10th Ed.<br>• </p>
+<div style="text-align:center;margin-top:1.5rem;padding:1rem;background:rgba(21,101,192,.06);border-radius:10px">
+<p style="color:var(--accent);font-weight:800">Presentado por: Juan José Pérez Herrera</p>
+<p style="font-size:.85rem;color:var(--text)">Universidad Tecnológica de Pereira — 2026</p>
+</div>
+<span class="page-num">pág. 25-26</span>
+
+<span class="page-num">13</span>
+</div>
+<div class="spiral"><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div><div class="spiral-ring"></div></div>
+<div class="page page-right cover-page" style="background:linear-gradient(160deg,#0d4a6b,#1a7bb5)!important">
+<div class="cover-wave" style="font-size:3em">&#x2248;</div>
+<h1 class="book-title" style="font-size:1.8em;color:#fff">Fin del Cuaderno</h1>
+<p style="color:rgba(255,255,255,.8);margin:10px 0">"La f&iacute;sica es la poes&iacute;a de la naturaleza"</p>
+<p style="color:rgba(255,255,255,.6);font-size:.85em;margin-top:20px">Juan Jos&eacute; P&eacute;rez Herrera & Deisy Patricia Angarita<br>Edici&oacute;n digital interactiva</p>
+<span class="page-num" style="color:rgba(255,255,255,.3)">14</span>
+</div>
+</div>
+
+
+</div><!-- end #book -->
+</div><!-- end #book-container -->
+
+<!-- NAV BAR -->
+<div id="nav-bar">
+<button class="nav-btn" onclick="goTo(0)" title="Portada" style="background:linear-gradient(135deg,#f59e0b,#ef4444)"><i class="fas fa-book-open"></i></button>
+<button class="nav-btn" id="btn-prev" onclick="prev()" title="Anterior"><i class="fas fa-chevron-left"></i></button>
+<button class="nav-btn" id="btn-next" onclick="next()" title="Siguiente"><i class="fas fa-chevron-right"></i></button>
+<button class="nav-btn" onclick="goTo(0)" title="Indice"><i class="fas fa-list"></i></button>
+</div>
+
+<!-- CHATBOT -->
+<div id="chat-bubble">💡 "La imaginación es más importante que el conocimiento." — Einstein</div>
+<button id="chat-toggle" onclick="toggleChat()" title="Chat con Científicos"><i class="fas fa-flask" style="font-size:24px"></i></button>
+<div id="chat-panel">
+<div id="chat-header">
+<div class="sci-info">
+<h3 id="sci-header-name">🧠 Albert Einstein</h3>
+<small id="sci-header-desc">Físico teórico — Relatividad</small>
+</div>
+<div class="header-actions">
+<button onclick="toggleChat()" title="Cerrar"><i class="fas fa-times"></i></button>
+</div>
+</div>
+<div id="scientist-selector">
+<button class="sci-btn active" onclick="changePersona('einstein')"><span class="sci-emoji">🧠</span>Einstein</button>
+<button class="sci-btn" onclick="changePersona('curie')"><span class="sci-emoji">⚗️</span>Curie</button>
+<button class="sci-btn" onclick="changePersona('newton')"><span class="sci-emoji">🍎</span>Newton</button>
+<button class="sci-btn" onclick="changePersona('feynman')"><span class="sci-emoji">🎯</span>Feynman</button>
+<button class="sci-btn" onclick="changePersona('tesla')"><span class="sci-emoji">⚡</span>Tesla</button>
+</div>
+<div id="chat-messages"></div>
+<div id="api-key-section">
+<p>🔑 Ingresa tu API Key de <b>Gemini</b> para chatear con los científicos:</p>
+<input type="password" id="api-key-input" placeholder="AIzaSy...">
+<button onclick="saveApiKey()"><i class="fas fa-link"></i> Conectar</button>
+</div>
+<div id="chat-suggestions" style="display:none">
+<button class="chat-suggest" onclick="askSuggestion(this)">¿Qué son las ondas estacionarias?</button>
+<button class="chat-suggest" onclick="askSuggestion(this)">Explica la ecuación de onda</button>
+<button class="chat-suggest" onclick="askSuggestion(this)">¿Cómo se afinan cuerdas?</button>
+</div>
+<div id="chat-input-area" style="display:none">
+<input type="text" id="chat-input" placeholder="Pregunta sobre ondas..." onkeydown="if(event.key==='Enter')sendChat()">
+<button id="chat-send" onclick="sendChat()"><i class="fas fa-paper-plane"></i></button>
+</div>
+</div>
+
+<!-- ZOOM + NARRATOR -->
+<div id="zoom-controls">
+<button onclick="zoomIn()" title="Zoom in"><i class="fas fa-search-plus"></i></button>
+<div id="zoom-level">100%</div>
+<button onclick="zoomOut()" title="Zoom out"><i class="fas fa-search-minus"></i></button>
+</div>
+<button id="narrator-btn" onclick="toggleNarrator()" title="Narrador de voz"><i class="fas fa-volume-up"></i></button>
+<div id="narrator-status">🔊 Narrando...</div>
+
+<script>
+// ========== NAVEGACION ==========
+const spreads = document.querySelectorAll('.spread');
+const totalSpreads = spreads.length;
+let current = 0;
+let flipping = false;
+
+function updateUI(){
+  spreads.forEach((s,i)=>{
+    s.classList.remove('active','flip-out-fwd','flip-out-back','flip-in-fwd','flip-in-back');
+    s.style.display = (i===current) ? 'flex' : 'none';
+    if(i===current) s.classList.add('active');
+  });
+  document.getElementById('btn-prev').disabled = current===0;
+  document.getElementById('btn-next').disabled = current===totalSpreads-1;
+  const pct = ((current)/(totalSpreads-1))*100;
+  document.getElementById('progress-bar').style.width = pct+'%';
+  document.getElementById('page-info').textContent = 'Pagina '+(current*2+1)+'-'+(current*2+2)+' de '+(totalSpreads*2);
+  if(typeof MathJax!=='undefined'&&MathJax.typesetPromise){MathJax.typesetPromise([spreads[current]]).catch(()=>{})}
+}
+
+function goTo(idx){
+  if(idx<0||idx>=totalSpreads||idx===current||flipping) return;
+  flipping = true;
+  const fwd = idx > current;
+  const oldS = spreads[current];
+  const newS = spreads[idx];
+  spreads.forEach(s => s.classList.remove('active','flip-out-fwd','flip-out-back','flip-in-fwd','flip-in-back'));
+  oldS.style.display = 'flex';
+  oldS.classList.add(fwd ? 'flip-out-fwd' : 'flip-out-back');
+  setTimeout(() => {
+    oldS.style.display = 'none';
+    oldS.classList.remove('flip-out-fwd','flip-out-back');
+    newS.style.display = 'flex';
+    newS.classList.add(fwd ? 'flip-in-fwd' : 'flip-in-back');
+    current = idx;
+    setTimeout(() => {
+      newS.classList.remove('flip-in-fwd','flip-in-back');
+      updateUI();
+      flipping = false;
+    }, 500);
+  }, 420);
+}
+function next(){goTo(current+1)}
+function prev(){goTo(current-1)}
+
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='INPUT')return;
+  if(e.key==='ArrowRight')next();
+  else if(e.key==='ArrowLeft')prev();
+});
+
+updateUI();
+// ===== QUIZ =====
+function ck(el,qid,ok){const c=document.getElementById(qid);if(c.dataset.a)return;c.dataset.a='1';c.querySelectorAll('.quiz-opt').forEach(o=>o.style.pointerEvents='none');if(ok)el.classList.add('correct');else{el.classList.add('wrong');c.querySelectorAll('.quiz-opt').forEach(o=>{if(o.getAttribute('onclick').includes(',1)'))o.classList.add('correct')})}const fb=document.getElementById(qid+'-fb');if(fb){fb.style.display='block';if(window.MathJax&&MathJax.typesetPromise)MathJax.typesetPromise([fb]).catch(()=>{})}}
+
+// ===== CHATBOT (Gemini 2.5 Flash) =====
+const GEMINI_MODEL = 'gemini-2.5-flash';
+const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/' + GEMINI_MODEL + ':generateContent?key=';
+const PERSONAS={
+  einstein:{name:'Albert Einstein',emoji:'🧠',desc:'Físico teórico — Relatividad',system:'Eres Albert Einstein. Responde con metáforas de la relatividad, humor filosófico y curiosidad infinita. Usa español.'},
+  curie:{name:'Marie Curie',emoji:'⚗️',desc:'Física y química — Radiactividad',system:'Eres Marie Curie. Responde con determinación, rigor científico y pasión por descubrir. Usa español.'},
+  newton:{name:'Isaac Newton',emoji:'🍎',desc:'Matemático — Leyes del movimiento',system:'Eres Isaac Newton. Responde con formalidad académica, menciona leyes del movimiento y cálculo. Usa español.'},
+  feynman:{name:'Richard Feynman',emoji:'🎯',desc:'Físico — Electrodinámica cuántica',system:'Eres Richard Feynman. Responde divertido, accesible, con analogías cotidianas geniales. Usa español.'},
+  tesla:{name:'Nikola Tesla',emoji:'⚡',desc:'Inventor — Corriente alterna',system:'Eres Nikola Tesla. Responde con visión futurista sobre electricidad, ondas y energía libre. Usa español.'}
+};
+const QUOTES=['"La imaginación es más importante que el conocimiento." — Einstein','"Nada en la vida es para ser temido, es solo para ser comprendido." — Curie','"Si he visto más lejos, es por estar sobre hombros de gigantes." — Newton','"La naturaleza usa solo los hilos más largos para tejer sus patrones." — Feynman','"El presente es suyo; el futuro es mío." — Tesla','"Lo importante es no dejar de hacerse preguntas." — Einstein','"Soy de aquellos que piensan que la ciencia tiene una gran belleza." — Curie','"Estudia mucho lo que más te interese de la forma más irreverente posible." — Feynman','"Nuestras virtudes y defectos son inseparables, como la fuerza y la materia." — Tesla'];
+let apiKey='',persona='einstein';
+
+// Chat bubble with random quotes
+function showBubble(){const b=document.getElementById('chat-bubble');if(!b)return;b.textContent='💡 '+QUOTES[Math.floor(Math.random()*QUOTES.length)];b.classList.add('visible');setTimeout(()=>b.classList.remove('visible'),6000)}
+setInterval(showBubble,25000);setTimeout(showBubble,3000);
+
+function toggleChat(){const p=document.getElementById('chat-panel');p.classList.toggle('open');document.getElementById('chat-bubble').classList.remove('visible')}
+
+function changePersona(id){
+  persona=id;
+  const p=PERSONAS[persona];
+  document.getElementById('sci-header-name').textContent=p.emoji+' '+p.name;
+  document.getElementById('sci-header-desc').textContent=p.desc;
+  document.querySelectorAll('.sci-btn').forEach(b=>b.classList.remove('active'));
+  if(event&&event.currentTarget)event.currentTarget.classList.add('active');
+  if(apiKey)addBotMsg('¡Hola! Soy <b>'+p.name+'</b> '+p.emoji+'. ¿En qué puedo ayudarte con las ondas?');
+}
+
+async function saveApiKey(){
+  const keyInput=document.getElementById('api-key-input');
+  const key=keyInput.value.trim();
+  if(!key){alert('Ingresa tu API Key de Gemini');return}
+  if(!key.startsWith('AIza')){alert('La API Key no parece válida. Debe comenzar con AIza...');return}
+  
+  // Show connecting state
+  const btn=document.querySelector('#api-key-section button');
+  const originalText=btn.innerHTML;
+  btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Verificando...';
+  btn.disabled=true;
+  
+  // Validate the key with a test request
+  try{
+    const testRes=await fetch(GEMINI_URL+key,{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({contents:[{parts:[{text:'Di solo: OK'}]}]})
+    });
+    const testData=await testRes.json();
+    
+    if(testData.error){
+      btn.innerHTML=originalText;btn.disabled=false;
+      if(testData.error.code===400)alert('⚠ API Key inválida o sin permisos.\nVerifica tu key en: https://aistudio.google.com/apikey');
+      else if(testData.error.code===403)alert('⚠ API Key sin acceso al modelo Gemini.\nVerifica los permisos de tu key.');
+      else alert('⚠ Error: '+testData.error.message);
+      return;
+    }
+    
+    // Key works!
+    apiKey=key;
+    document.getElementById('api-key-section').style.display='none';
+    document.getElementById('chat-input-area').style.display='flex';
+    document.getElementById('chat-suggestions').style.display='flex';
+    addBotMsg('✅ ¡Conectado con <b>Gemini 2.5 Flash</b>! 🚀<br>Soy <b>'+PERSONAS[persona].name+'</b> '+PERSONAS[persona].emoji+'. Pregúntame sobre ondas en cuerdas tensas.');
+  }catch(e){
+    btn.innerHTML=originalText;btn.disabled=false;
+    alert('⚠ Error de conexión: '+e.message+'\nVerifica tu internet.');
+  }
+}
+
+function addBotMsg(html){
+  const d=document.getElementById('chat-messages'),m=document.createElement('div');
+  m.className='msg bot';m.innerHTML='<span class="sci-name">'+PERSONAS[persona].emoji+' '+PERSONAS[persona].name+'</span>'+html;
+  d.appendChild(m);d.scrollTop=d.scrollHeight;
+}
+function addUserMsg(t){
+  const d=document.getElementById('chat-messages'),m=document.createElement('div');
+  m.className='msg user';m.textContent=t;d.appendChild(m);d.scrollTop=d.scrollHeight;
+}
+function showTyping(){
+  const d=document.getElementById('chat-messages'),t=document.createElement('div');
+  t.className='typing-dots';t.id='typing';t.innerHTML='<div class="td"></div><div class="td"></div><div class="td"></div>';
+  d.appendChild(t);d.scrollTop=d.scrollHeight;
+}
+function hideTyping(){const t=document.getElementById('typing');if(t)t.remove()}
+
+function askSuggestion(btn){
+  document.getElementById('chat-input').value=btn.textContent;
+  sendChat();
+}
+
+async function sendChat(){
+  const input=document.getElementById('chat-input'),text=input.value.trim();
+  if(!text||!apiKey)return;
+  addUserMsg(text);input.value='';showTyping();
+  const p=PERSONAS[persona];
+  try{
+    const res=await fetch(GEMINI_URL+apiKey,{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        contents:[{parts:[{text:p.system+'\n\nContexto: Estás en un cuaderno interactivo sobre ondas en cuerdas tensas (ecuación de onda, ondas estacionarias, armónicos, batidos, velocidad en cuerdas tensas, superposición, batidos, guitarra y armónicos).\n\nPregunta del estudiante: '+text+'\n\nINSTRUCCIONES: Responde en español. Da definiciones COMPLETAS y detalladas. Incluye fórmulas cuando sea relevante. Si te piden una definición, explícala a fondo con ejemplos. No recortes ni resumas demasiado. Usa formato de texto simple (sin markdown). Sé preciso científicamente.'}]}],
+        generationConfig:{maxOutputTokens:2048,temperature:0.7}
+      })
+    });
+    hideTyping();
+    const data=await res.json();
+    if(data.candidates&&data.candidates[0]&&data.candidates[0].content){
+      addBotMsg(data.candidates[0].content.parts[0].text);
+    }else if(data.error){
+      addBotMsg('⚠ Error ('+(data.error.code||'?')+'): '+data.error.message);
+      if(data.error.code===429)addBotMsg('💡 <i>Has superado el límite de solicitudes. Espera unos segundos e intenta de nuevo.</i>');
+    }else{
+      addBotMsg('⚠ Respuesta inesperada del servidor. Intenta de nuevo.');
+    }
+  }catch(e){
+    hideTyping();
+    addBotMsg('⚠ Error de red: '+e.message+'<br><i>Verifica tu conexión a internet.</i>');
+  }
+}
+
+// ===== ZOOM =====
+let zoomScale=100;
+function zoomIn(){zoomScale=Math.min(150,zoomScale+10);applyZoom()}
+function zoomOut(){zoomScale=Math.max(60,zoomScale-10);applyZoom()}
+function applyZoom(){
+  document.getElementById('book').style.transform='scale('+zoomScale/100+')';
+  document.getElementById('book').style.transformOrigin='center center';
+  document.getElementById('zoom-level').textContent=zoomScale+'%';
+}
+
+// ===== NARRATOR (Female Spanish Voice) =====
+let narrating=false,currentUtterance=null;
+function toggleNarrator(){
+  if(narrating){stopNarrator();return}
+  const spread=spreads[current];if(!spread)return;
+  const pages=spread.querySelectorAll('.page');
+  let text='';
+  pages.forEach(p=>{
+    const clone=p.cloneNode(true);
+    clone.querySelectorAll('canvas,button,input,select,.page-num,.sim-controls,.sim-metrics,.quiz-opt,.quiz-feedback,details,style,script').forEach(el=>el.remove());
+    text+=clone.textContent.replace(/\s+/g,' ').trim()+'. ';
+  });
+  if(!text.trim()){return}
+  narrating=true;
+  document.getElementById('narrator-btn').classList.add('speaking');
+  document.getElementById('narrator-btn').innerHTML='<i class="fas fa-stop"></i>';
+  document.getElementById('narrator-status').textContent='🔊 Narrando página '+(current*2+1)+'...';
+  document.getElementById('narrator-status').classList.add('visible');
+  
+  currentUtterance=new SpeechSynthesisUtterance(text);
+  currentUtterance.lang='es-ES';
+  currentUtterance.rate=0.85;
+  currentUtterance.pitch=1.15;
+  
+  // Select female Spanish voice
+  const voices=speechSynthesis.getVoices();
+  const femaleVoice=voices.find(v=>(v.lang.startsWith('es'))&&(/female|femenin|mujer|helena|elvira|lucia|paulina|sabina|mónica|monica|conchita|miren/i.test(v.name)))||voices.find(v=>v.lang.startsWith('es')&&(/microsoft|google/i.test(v.name)))||voices.find(v=>v.lang.startsWith('es'));
+  if(femaleVoice)currentUtterance.voice=femaleVoice;
+  
+  currentUtterance.onend=()=>stopNarrator();
+  currentUtterance.onerror=()=>stopNarrator();
+  speechSynthesis.cancel();
+  speechSynthesis.speak(currentUtterance);
+}
+function stopNarrator(){
+  narrating=false;speechSynthesis.cancel();
+  document.getElementById('narrator-btn').classList.remove('speaking');
+  document.getElementById('narrator-btn').innerHTML='<i class="fas fa-volume-up"></i>';
+  document.getElementById('narrator-status').classList.remove('visible');
+}
+// Preload voices
+if(speechSynthesis.onvoiceschanged!==undefined)speechSynthesis.onvoiceschanged=()=>{};
+</script>
+</body>
+</html>
